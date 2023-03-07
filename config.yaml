@@ -17,4 +17,4 @@ hub:
 singleuser:
   image:
     name: nmearl/cds-containds
-    tag: 0.1.0
+    tag: latest
