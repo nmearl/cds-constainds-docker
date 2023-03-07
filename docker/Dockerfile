@@ -5,30 +5,42 @@ FROM $BASE_REPO
 
 USER root
 
+SHELL ["/bin/bash", "--login", "-c"]
+
 # Need to get gcc in the linux environment
 RUN apt update \ 
-    && apt install -y build-essential \
+    && apt install -y gcc \
     && apt install -y gfortran \
     && apt install -y curl \
     && apt install -y libxml2-dev libxslt-dev \
     && apt-get remove -y nodejs \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
+    && apt-get install -y nodejs
 
 # For pinned verions of older voila, we need an older version of nodejs
 # RUN apt-get remove -y nodejs
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && apt-get install -y nodejs
+# RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && apt-get install -y nodejs
+# SHELL ["/bin/bash", "--login", "-i", "-c"]
+# RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+# RUN source /root/.bashrc && nvm install 16
+# SHELL ["/bin/bash", "--login", "-c"]
+
 
 USER $NB_UID
 
-RUN conda create -n default python=3.8 --quiet --yes
-ARG conda_env=default
-ENV PATH /opt/conda/envs/$conda_env/bin:$PATH
-ENV CONDA_DEFAULT_ENV $conda_env
+# RUN conda create -n default python=3.8 --quiet --yes
+# ARG conda_env=default
+# ENV PATH /opt/conda/envs/$conda_env/bin:$PATH
+# ENV CONDA_DEFAULT_ENV $conda_env
 
 # Install cosmicds + hubbleds
-RUN /bin/bash -c conda activate default \ 
+# RUN /bin/bash -c conda activate default \ 
+#     && conda install --quiet --yes -c conda-forge git numpy "scipy>=1.1" cython lxml astropy pandas matplotlib scikit-image h5py \
+#     && pip install 'jhsingle-native-proxy>=0.7.6' git+https://github.com/nmearl/hubbleds.git
+RUN conda install --quiet --yes "python<3.9" \
     && conda install --quiet --yes -c conda-forge git numpy "scipy>=1.1" cython lxml astropy pandas matplotlib scikit-image h5py \
-    && pip install 'jhsingle-native-proxy>=0.7.6' git+https://github.com/cosmicds/hubbleds.git
+    && pip install 'jhsingle-native-proxy>=0.7.6' git+https://github.com/nmearl/hubbleds.git
 
 RUN rm -rf /home/jovyan/work
 
