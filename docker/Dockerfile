@@ -29,17 +29,21 @@ RUN apt update \
 
 USER $NB_UID
 
-# RUN conda create -n default python=3.8 --quiet --yes
+RUN conda create -n default python=3.8 --quiet --yes
+# RUN echo "conda activate default" >> ~/.bashrc
+# SHELL ["/bin/bash", "--login", "-c"]
+
 # ARG conda_env=default
-# ENV PATH /opt/conda/envs/$conda_env/bin:$PATH
-# ENV CONDA_DEFAULT_ENV $conda_env
+ENV PATH /opt/conda/envs/default/bin:$PATH
+ENV CONDA_DEFAULT_ENV default
+SHELL ["conda", "run", "-n", "default", "/bin/bash", "-c"]
 
 # Install cosmicds + hubbleds
 # RUN /bin/bash -c conda activate default \ 
 #     && conda install --quiet --yes -c conda-forge git numpy "scipy>=1.1" cython lxml astropy pandas matplotlib scikit-image h5py \
 #     && pip install 'jhsingle-native-proxy>=0.7.6' git+https://github.com/nmearl/hubbleds.git
-RUN conda install --quiet --yes "python<3.9" \
-    && conda install --quiet --yes -c conda-forge git numpy "scipy>=1.1" cython lxml astropy pandas matplotlib scikit-image h5py \
+# RUN conda install --quiet --yes "python<3.9" \
+RUN conda install --quiet --yes -c conda-forge git numpy "scipy>=1.1" cython lxml astropy pandas matplotlib scikit-image h5py \
     && pip install 'jhsingle-native-proxy>=0.7.6' git+https://github.com/nmearl/hubbleds.git
 
 RUN rm -rf /home/jovyan/work
