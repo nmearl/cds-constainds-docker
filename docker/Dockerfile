@@ -10,7 +10,9 @@ SHELL ["/bin/bash", "--login", "-c"]
 # Need to get gcc in the linux environment
 RUN apt update \ 
     && apt install -y gcc \
+    && apt install -y g++ \
     && apt install -y gfortran \
+    && apt install -y cmake \
     && apt install -y curl \
     && apt install -y libxml2-dev libxslt-dev \
     && apt-get remove -y nodejs \
@@ -29,6 +31,9 @@ RUN apt update \
 
 USER $NB_UID
 
+# COPY environment.yaml /home/jovyan/
+# RUN conda env create --file environment.yaml
+
 RUN conda create -n default python=3.8 --quiet --yes
 # RUN echo "conda activate default" >> ~/.bashrc
 # SHELL ["/bin/bash", "--login", "-c"]
@@ -39,15 +44,13 @@ ENV CONDA_DEFAULT_ENV default
 SHELL ["conda", "run", "-n", "default", "/bin/bash", "-c"]
 
 # Install cosmicds + hubbleds
-# RUN /bin/bash -c conda activate default \ 
-#     && conda install --quiet --yes -c conda-forge git numpy "scipy>=1.1" cython lxml astropy pandas matplotlib scikit-image h5py \
-#     && pip install 'jhsingle-native-proxy>=0.7.6' git+https://github.com/nmearl/hubbleds.git
-# RUN conda install --quiet --yes "python<3.9" \
-RUN conda install --quiet --yes -c conda-forge git numpy "scipy>=1.1" cython lxml astropy pandas matplotlib scikit-image h5py \
-    && pip install 'jhsingle-native-proxy>=0.7.6' git+https://github.com/nmearl/hubbleds.git
+RUN conda install --quiet --yes -c conda-forge git numpy "scipy>=1.1" cython lxml astropy pandas matplotlib scikit-image h5py openblas
+# RUN conda install --quiet --yes -c conda-forge git openblas
+RUN pip install --upgrade pip
+RUN pip install "jupyter-server-proxy==3.2.2" "aiohttp==3.8.4" 
+RUN pip install git+https://github.com/nmearl/hubbleds.git
 
 RUN rm -rf /home/jovyan/work
-
 
 COPY jupyter_notebook_config_extra.py /etc/jupyter/
 RUN cat /etc/jupyter/jupyter_notebook_config_extra.py >> /etc/jupyter/jupyter_notebook_config.py

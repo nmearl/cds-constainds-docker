@@ -1,10 +1,10 @@
 {
-    "VoilaConfiguration": {
-      "template": "cosmicds-default",
-      "enable_nbextensions": true,
-      "file_whitelist": [".*"],
-      "show_tracebacks": true,
-      "http_keep_alive_timeout": 30,
-      "iopub_timeout": 100
-    }
+  "VoilaConfiguration": {
+    "template": "cosmicds-default",
+    "enable_nbextensions": true,
+    "file_whitelist": [".*"],
+    "show_tracebacks": true,
+    "http_keep_alive_timeout": 30,
+    "iopub_timeout": 100
   }
+}
