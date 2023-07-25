@@ -1,20 +1,29 @@
+# helm upgrade --cleanup-on-fail \
+#   --install ztjh-release jupyterhub/jupyterhub \
+#   --namespace ztjh \
+#   --create-namespace \
+#   --version=2.0.0 \
+#   --values config.yaml
+
+# helm upgrade --cleanup-on-fail \
+#   ztjh-release jupyterhub/jupyterhub \
+#   --namespace ztjh \
+#   --version=2.0.0 \
+#   --values config.yaml
+
 hub:
+  config:
+    Authenticator:
+      admin_users:
+        - admin
   allowNamedServers: true
-  image:
-    name: ideonate/cdsdashboards-jupyter-k8s-hub
-    tag: 1.2.0-0.6.3
-  extraConfig:
-    cds-handlers: |
-      from cdsdashboards.hubextension import cds_extra_handlers
-      c.JupyterHub.extra_handlers = cds_extra_handlers
-    cds-templates: |
-      from cdsdashboards.app import CDS_TEMPLATE_PATHS
-      c.JupyterHub.template_paths = CDS_TEMPLATE_PATHS
-    cds-kube: |
-      c.JupyterHub.spawner_class = 'cdsdashboards.hubextension.spawners.variablekube.VariableKubeSpawner'
-      c.CDSDashboardsConfig.builder_class = 'cdsdashboards.builder.kubebuilder.KubeBuilder'
 
 singleuser:
+  startTimeout: 60
   image:
-    name: nmearl/cds-containds
-    tag: latest
+    name: nmearl/cds-jsp
+    tag: "0.1.2"
+
+# scheduling:
+#   userScheduler:
+#     enabled: false
